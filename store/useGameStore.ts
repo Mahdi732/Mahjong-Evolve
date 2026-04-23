@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Tile, GameHistory, result, bet } from "@/types/game";
+import { Tile, RoundHistory, result, bet } from "@/types/game";
 import { roundAffection } from "@/logic/gameLogic";
 
 interface GameState {
@@ -9,10 +9,10 @@ interface GameState {
     playerTiles: Tile[];
     opponentTiles: Tile[];
     reshuffleCount: number;
-    gameHistory: GameHistory[];
+    gameHistory: RoundHistory[];
     specailTailValue : object;
     result: result | null;
-    placeBet: (bet: bet) => void;
+    placeBet: (bet: bet, userTiles : Tile[], opponentTiles : Tile[]) => void;
 }
 
 function initialize() {
@@ -40,8 +40,8 @@ export const useGameStore = create<GameState>((set) => ({
         "flower" : 5,
         "season" : 5,
     },
-    placeBet: (bet: bet) => {
-        roundAffection(bet);
+    placeBet: (bet: bet, userTiles : Tile[], opponentTiles : Tile[]) => {
+        roundAffection(bet, userTiles, opponentTiles);
     }
 
 }))
