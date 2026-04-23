@@ -11,7 +11,7 @@ export interface Tile {
     name : string
 }
 
-export interface GameHistory {
+export interface RoundHistory {
     id : string, 
     bet : bet,
     playerTileSum : number,
