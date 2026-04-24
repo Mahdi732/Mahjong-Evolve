@@ -38,19 +38,21 @@ export const useGameStore = create<GameState>((set) => ({
         set((state) => {
             const [newSpecialTailValue, newHistory, newScore] = roundAffection(bet, state.playerTiles, state.opponentTiles, state.specialTailValue, state.score);
             const isGameOver = gameOverChecker(newSpecialTailValue);
-            
-            if(state.reshuffleCount < 3) {
-                return {
-                    ...state,
-                    result: "lose"
-                }
-            }else {
-                const reshuffledTiles = reFullishTiles(state.discardedTiles);
-                return {
-                    ...state,
-                    reshuffleCount: state.reshuffleCount + 1,
-                    tile: [...state.tile, ...reshuffledTiles],
-                    discardedTiles: [],
+
+            if (state.tile.length < 5) {
+                if(state.reshuffleCount >= 2) {
+                    return {
+                        ...state,
+                        result: "lose"
+                    }
+                }else {
+                    const reshuffledTiles = reFullishTiles(state.discardedTiles);
+                    return {
+                        ...state,
+                        reshuffleCount: state.reshuffleCount + 1,
+                        tile: [...state.tile, ...reshuffledTiles],
+                        discardedTiles: [],
+                    }
                 }
             }
 
@@ -62,14 +64,14 @@ export const useGameStore = create<GameState>((set) => ({
                 }
             })
 
-
+            const opponentNewHand = editedDeck.splice(0, 5);
 
             return {
                 score: newScore,
                 tile: editedDeck,
                 discardedTiles: [...state.discardedTiles, ...state.playerTiles],
                 playerTiles: [...state.opponentTiles],
-                opponentTiles: state.tile.splice(0, 5),
+                opponentTiles: opponentNewHand,
                 specialTailValue: newSpecialTailValue,
                 gameHistory: [...state.gameHistory, newHistory],
                 result: isGameOver || (state.reshuffleCount >= 3 ? "lose" : null),
