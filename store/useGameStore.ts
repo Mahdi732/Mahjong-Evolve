@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Tile, RoundHistory, result, bet, specialTailValue } from "@/types/game";
 import { roundAffection } from "@/logic/gameLogic";
+import initialize from "@/logic/gameInitialize";
 
 interface GameState {
     score: number;
@@ -13,14 +14,6 @@ interface GameState {
     specialTailValue: specialTailValue;
     result: result | null;
     placeBet: (bet: bet) => void;
-}
-
-function initialize() {
-    const tilePacket: Tile[] = [];
-    function generateTiles(): Tile[] { return tilePacket }
-    function genrateUserTail(): Tile[] { return [] }
-    function genrateOpponentTail(): Tile[] { return [] }
-    return [generateTiles, genrateUserTail, genrateOpponentTail];
 }
 
 const tileGenerator = initialize();
