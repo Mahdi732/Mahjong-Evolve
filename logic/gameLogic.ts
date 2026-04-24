@@ -1,70 +1,64 @@
-import { Tile, bet, result } from "@/types/game";
+import { Tile, bet, result, specialTailValue, RoundHistory } from "@/types/game";
 
-export const roundAffection = (bet : bet, userTiles : Tile[], opponentTiles : Tile[] ) : result => {
-    const userHandTile : Tile[] = userTiles;
-    const opponentHandTile : Tile[] = opponentTiles;
+export const roundAffection = (bet: bet, userTiles: Tile[], opponentTiles: Tile[], specialTailsValue: specialTailValue, currentScore: number): [specialTailValue, RoundHistory, number] => {
+    const userHandValue: number = getTilesValue(userTiles, specialTailsValue);
+    const opponentHandValue: number = getTilesValue(opponentTiles, specialTailsValue);
 
-    const userHandValue : number = getTilesValue(userHandTile);
-    const opponentHandValue : number = getTilesValue(opponentHandTile);
+    let roundStatus: result = "lose";
+    let specialTailSelected: Tile[] = [];
 
-    let roundStatus : result = "lose";
-    let winSpecailTail : Tile[] = [];
-    let loseSpecailTail : Tile[] = [];
+    specialTailSelected = getSpecailTail(userTiles);
 
-    if (bet == 'higher') {
-        if (userHandValue > opponentHandValue) {
-            roundStatus = "win";
-            winSpecailTail = getSpecailTail(userHandTile);
-            loseSpecailTail = getSpecailTail(opponentHandTile);
-        } else {
-            winSpecailTail = getSpecailTail(opponentHandTile);
-            loseSpecailTail = getSpecailTail(userHandTile);
-        }
-    } else if (bet == 'lower') {
-        if (userHandValue < opponentHandValue) {
-            roundStatus = "win";
-            winSpecailTail = getSpecailTail(userHandTile);
-            loseSpecailTail = getSpecailTail(opponentHandTile);
-        } else {
-            winSpecailTail = getSpecailTail(opponentHandTile);
-            loseSpecailTail = getSpecailTail(userHandTile);
-        }
-    } else if (bet == 'same') {
-        if (userHandValue == opponentHandValue) {
-            roundStatus = "win";
-            winSpecailTail = getSpecailTail(userHandTile);
-            loseSpecailTail = getSpecailTail(opponentHandTile);
-        } else {
-            winSpecailTail = getSpecailTail(opponentHandTile);
-            loseSpecailTail = getSpecailTail(userHandTile);
-        }
+    if (bet == 'higher' && userHandValue < opponentHandValue) {
+        roundStatus = "win";
+    } else if (bet == 'lower' && userHandValue > opponentHandValue) {
+        roundStatus = "win";
+    } else if (bet == 'same' && userHandValue == opponentHandValue) {
+        roundStatus = "win";
     }
 
-    createNewHistory(roundStatus, bet, userHandValue, opponentHandValue);
-    editSpecailTailValue(roundStatus, winSpecailTail, loseSpecailTail);
+    const newHistory = createNewHistory(roundStatus, bet, userHandValue, opponentHandValue);
+    const newSpecialTailsValue = editSpecialTailValue(specialTailSelected, specialTailsValue, roundStatus);
 
-    return roundStatus;
+    const newScore = (roundStatus == 'win'? currentScore + 1 : currentScore);
+
+    return [newSpecialTailsValue, newHistory, newScore];
 }
 
 
-const getTilesValue = (tails : Tile[]) => {
-    let value : number = 0;
+const getTilesValue = (tails: Tile[], specialTailsValue: specialTailValue) => {
+    let value: number = 0;
 
     tails.forEach((tail) => {
-        value += tail.value;
+        if (tail.type === 'number') {
+            value += tail.value;
+        } else {
+            value += specialTailsValue[tail.type];
+        }
     })
 
     return value;
 }
 
-const getSpecailTail = (tails : Tile[]) : Tile[] => {
-    return tails.filter((tail) => {
-        return tail.type == "dragon" || tail.type == "wind";
+const getSpecailTail = (tails: Tile[]): Tile[] => {
+    return tails.filter(t => t.type !== 'number')
+}
+
+const createNewHistory = (roundStatus: result, betType: bet, userHandValue: number, opponentHandValue: number) => {
+    return {
+        id: '',
+        bet: betType,
+        playerTileSum: userHandValue,
+        opponentTileSum: opponentHandValue,
+        result: roundStatus
+    };
+}
+
+const editSpecialTailValue = (specialTailSelected: Tile[], specialTailValue: specialTailValue, roundStatus: result) => {
+    const editedSpecialTailValue = { ...specialTailValue };
+    specialTailSelected.forEach((tail) => {
+        const key = tail.type as keyof specialTailValue;
+        editedSpecialTailValue[key] += (roundStatus === "win" ? 1 : -1);
     })
-}
-
-const createNewHistory = (roundStatus : result, betType : bet, userHandValue : number, opponentHandValue : number) => {
-}
-
-const editSpecailTailValue = (roundStatus : result, winSpecailTail : Tile[], loseSpecailTail : Tile[]) => {
+    return editedSpecialTailValue;
 }
