@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { Tile, RoundHistory, result, bet, specialTailValue } from "@/types/game";
-import { roundAffection } from "@/logic/gameLogic";
+import { gameOverChecker, roundAffection, reFullishTiles } from "@/logic/gameLogic";
 import initialize from "@/logic/gameInitialize";
 
 interface GameState {
@@ -37,6 +37,22 @@ export const useGameStore = create<GameState>((set) => ({
     placeBet: (bet: bet) => {
         set((state) => {
             const [newSpecialTailValue, newHistory, newScore] = roundAffection(bet, state.playerTiles, state.opponentTiles, state.specialTailValue, state.score);
+            const isGameOver = gameOverChecker(newSpecialTailValue);
+            
+            if(state.reshuffleCount < 3) {
+                return {
+                    ...state,
+                    result: "lose"
+                }
+            }else {
+                const reshuffledTiles = reFullishTiles(state.discardedTiles);
+                return {
+                    ...state,
+                    reshuffleCount: state.reshuffleCount + 1,
+                    tile: [...state.tile, ...reshuffledTiles],
+                    discardedTiles: [],
+                }
+            }
 
             const editedDeck = state.tile.map(t => {
                 if (t.type === "number") return t;
@@ -47,11 +63,17 @@ export const useGameStore = create<GameState>((set) => ({
             })
 
 
+
             return {
+                score: newScore,
                 tile: editedDeck,
+                discardedTiles: [...state.discardedTiles, ...state.playerTiles],
+                playerTiles: [...state.opponentTiles],
+                opponentTiles: state.tile.splice(0, 5),
                 specialTailValue: newSpecialTailValue,
                 gameHistory: [...state.gameHistory, newHistory],
-                score: newScore
+                result: isGameOver || (state.reshuffleCount >= 3 ? "lose" : null),
+                
             }
         })
     }
