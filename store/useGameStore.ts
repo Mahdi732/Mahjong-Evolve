@@ -36,27 +36,30 @@ export const useGameStore = create<GameState>((set) => ({
     },
     placeBet: (bet: bet) => {
         set((state) => {
-            const [newSpecialTailValue, newHistory, newScore] = roundAffection(bet, state.playerTiles, state.opponentTiles, state.specialTailValue, state.score);
-            const isGameOver = gameOverChecker(newSpecialTailValue);
 
-            if (state.tile.length < 5) {
+            let currentReshuffleCount : number = state.reshuffleCount;
+            let currentTile : Tile[] = state.tile;
+            let currentDiscardedTiles : Tile[] = state.discardedTiles;
+
+            if (state.tile.length <= 10) {
                 if(state.reshuffleCount >= 2) {
                     return {
                         ...state,
                         result: "lose"
                     }
-                }else {
-                    const reshuffledTiles = reFullishTiles(state.discardedTiles);
-                    return {
-                        ...state,
-                        reshuffleCount: state.reshuffleCount + 1,
-                        tile: [...state.tile, ...reshuffledTiles],
-                        discardedTiles: [],
-                    }
                 }
+                const reshuffledTiles = reFullishTiles(currentDiscardedTiles);
+                
+                currentReshuffleCount += 1;
+                currentTile =  [...currentTile, ...reshuffledTiles];
+                currentDiscardedTiles = [];
+                
             }
 
-            const editedDeck = state.tile.map(t => {
+            const [newSpecialTailValue, newHistory, newScore] = roundAffection(bet, state.playerTiles, state.opponentTiles, state.specialTailValue, state.score);
+            const isGameOver = gameOverChecker(newSpecialTailValue);
+
+            const editedDeck = currentTile.map(t => {
                 if (t.type === "number") return t;
                 return {
                     ...t,
@@ -69,9 +72,10 @@ export const useGameStore = create<GameState>((set) => ({
             return {
                 score: newScore,
                 tile: editedDeck,
-                discardedTiles: [...state.discardedTiles, ...state.playerTiles],
+                discardedTiles: [...currentDiscardedTiles, ...state.playerTiles],
                 playerTiles: [...state.opponentTiles],
                 opponentTiles: opponentNewHand,
+                reshuffleCount: currentReshuffleCount,
                 specialTailValue: newSpecialTailValue,
                 gameHistory: [...state.gameHistory, newHistory],
                 result: isGameOver || (state.reshuffleCount >= 3 ? "lose" : null),
