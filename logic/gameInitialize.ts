@@ -2,15 +2,22 @@ import { Tile, TileType } from "@/types/game";
 
 export default function initialize() {
     const tilePacket: Tile[] = [];
+
     generateNumberTile(tilePacket)
     generateSpecialTile(tilePacket)
+
+    shuffleTiles(tilePacket);
+
+    const userTile: Tile[] = tilePacket.splice(0, 5);
+    const opponentTile: Tile[] = tilePacket.splice(0, 5);
+
     function generateTiles(): Tile[] { return tilePacket }
-    function genrateUserTail(): Tile[] { return [] }
-    function genrateOpponentTail(): Tile[] { return [] }
+    function genrateUserTail(): Tile[] { return userTile }
+    function genrateOpponentTail(): Tile[] { return opponentTile }
     return [generateTiles, genrateUserTail, genrateOpponentTail];
 }
 
-const generateNumberTile = (packet : Tile[]) => {
+export const generateNumberTile = (packet : Tile[]) => {
     const tileName = ["Dots", "Bamboo", "Characters"];
     tileName.forEach(t => {
         for (let num = 1; num <= 9; num++) {
@@ -26,7 +33,7 @@ const generateNumberTile = (packet : Tile[]) => {
     })
 }
 
-const generateSpecialTile = (packet : Tile[]) => {
+export const generateSpecialTile = (packet : Tile[]) => {
     const tileCategorie = [
         {type : "dragon", name : ["Red", "Green", "White"]},
         {type : "wind", name : ["North", "South", "East", "West"]},
@@ -41,10 +48,20 @@ const generateSpecialTile = (packet : Tile[]) => {
                 packet.push({
                     id: "id" + Math.random().toString(16).slice(2),
                     type: t.type as TileType,
-                    value: 0,
+                    value: 5,
                     name: n + ' ' + copy
                 })
             }
         })
     })
+}
+
+export const shuffleTiles = (tiles: Tile[]) : Tile[] => {
+    let currentIndex = tiles.length;
+    while (currentIndex != 0) {
+        const randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [tiles[currentIndex], tiles[randomIndex]] = [tiles[randomIndex], tiles[currentIndex]];
+    }
+    return tiles;
 }
