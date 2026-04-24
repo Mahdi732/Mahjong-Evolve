@@ -1,4 +1,5 @@
 import { Tile, bet, result, specialTailValue, RoundHistory } from "@/types/game";
+import { generateNumberTile, generateSpecialTile, shuffleTiles } from "@/logic/gameInitialize";
 
 export const roundAffection = (bet: bet, userTiles: Tile[], opponentTiles: Tile[], specialTailsValue: specialTailValue, currentScore: number): [specialTailValue, RoundHistory, number] => {
     const userHandValue: number = getTilesValue(userTiles, specialTailsValue);
@@ -46,7 +47,7 @@ const getSpecailTail = (tails: Tile[]): Tile[] => {
 
 const createNewHistory = (roundStatus: result, betType: bet, userHandValue: number, opponentHandValue: number) => {
     return {
-        id: '',
+        id: 'id' + Math.random().toString(16).slice(2),
         bet: betType,
         playerTileSum: userHandValue,
         opponentTileSum: opponentHandValue,
@@ -61,4 +62,23 @@ const editSpecialTailValue = (specialTailSelected: Tile[], specialTailValue: spe
         editedSpecialTailValue[key] += (roundStatus === "win" ? 1 : -1);
     })
     return editedSpecialTailValue;
+}
+
+export const gameOverChecker = (specialTailValue: specialTailValue): result | null => {
+    for (const [key, value] of Object.entries(specialTailValue)) {
+        if (value <= 0) {
+            return "lose";
+        }else if (value >= 10) {
+            return "win";
+        }
+    }
+    return null;
+}
+
+export const reFullishTiles = (discardedTiles: Tile[]) : Tile[] => {
+    const newTiles : Tile[] = [...discardedTiles];
+    generateNumberTile(newTiles);
+    generateSpecialTile(newTiles);
+    shuffleTiles(newTiles);
+    return newTiles;
 }
