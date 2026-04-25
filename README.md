@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+#🀄 Mahjong Hand Betting Game
+A high-performance, web-based betting engine built with Next.js 14, TypeScript, and Zustand. This project demonstrates advanced state management, dynamic game loop logic, and a scalable "Feature-Ready" architecture.
 
-## Getting Started
+🚀 Technical Stack
+Framework: Next.js 14 (App Router)
 
-First, run the development server:
+Language: TypeScript (Strict Mode)
 
-```bash
+State Management: Zustand (Immutable State Updates)
+
+Styling: Tailwind CSS
+
+Logic: Custom Mahjong Tile Evolution Engine
+
+🧠 Game Logic & Architecture
+The core engine is engineered for scalability and predictability, ensuring complex array manipulations don't trigger unnecessary re-renders or state inconsistencies.
+
+Core Systems
+Dynamic Tile Evolution: Non-number tiles (Dragons, Winds, Flowers, Seasons) begin at a base value of 5. Values fluctuate (+1/-1) based on round outcomes until they hit boundary conditions (0 or 10), triggering a game-over state.
+
+Deck Inflation System: To support infinite gameplay loops, the engine automatically reshuffles a fresh 144-tile deck into the discard pile whenever the draw pile reaches critical depletion.
+
+Fairness Buffer: A 10-tile threshold check is enforced to guarantee every round remains a balanced 5-vs-5 match, even during mid-round reshuffle events.
+
+The "Workspace Pattern": To handle destructive array methods (like splice) within Zustand, the logic implements a workspace clone strategy. This ensures all "deck surgery" is performed on a draft before being committed back to the immutable state.
+
+Game Over Conditions
+Critical Value: Any single special tile value reaches 0 or 10.
+
+Exhaustion: The Draw Pile is exhausted for the 3rd time (reshuffle limit reached).
+
+🛠️ Setup & Installation
+To run this project locally, follow these steps:
+
+Clone the repository:
+
+Bash
+git clone https://github.com/Mahdi732/mahjong-betting-game.git
+cd mahjong-betting-game
+Install dependencies:
+
+Bash
+npm install
+Run the development server:
+
+Bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Open the app: Navigate to http://localhost:3000 in your browser.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🤖 AI Utilization Disclosure
+In alignment with technical assessment transparency, here is the breakdown of development:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+✍️ Handwritten
+Architectural Design: Core state management flow and "Workspace Pattern" logic.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Deck Mechanics: Custom algorithms for deck surgery, reshuffling, and fairness buffers.
 
-## Learn More
+Frontend: Component composition, Tailwind CSS implementation, and UI/UX flow.
 
-To learn more about Next.js, take a look at the following resources:
+Type Safety: All TypeScript interface definitions and strict type checking.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+🤖 AI Assisted
+Optimization: Logic refinement within the Zustand set functions to prevent "skipped rounds" during high-frequency state updates.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Documentation: Polishing technical English for UI labels and README clarity
