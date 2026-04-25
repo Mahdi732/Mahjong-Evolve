@@ -1,65 +1,100 @@
-#🀄 Mahjong Hand Betting Game
-A high-performance, web-based betting engine built with Next.js 14, TypeScript, and Zustand. This project demonstrates advanced state management, dynamic game loop logic, and a scalable "Feature-Ready" architecture.
+# 🀄 Mahjong Hand Betting Game
 
-🚀 Technical Stack
-Framework: Next.js 14 (App Router)
+A high-performance, web-based betting engine built with **Next.js 14**, **TypeScript**, and **Zustand**.  
+This project showcases advanced state management, dynamic game-loop logic, and a scalable, feature-ready architecture.
 
-Language: TypeScript (Strict Mode)
+---
 
-State Management: Zustand (Immutable State Updates)
+## 🚀 Technical Stack
 
-Styling: Tailwind CSS
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript (Strict Mode)
+- **State Management:** Zustand (Immutable State Updates)
+- **Styling:** Tailwind CSS
+- **Core Logic:** Custom Mahjong Tile Evolution Engine
 
-Logic: Custom Mahjong Tile Evolution Engine
+---
 
-🧠 Game Logic & Architecture
-The core engine is engineered for scalability and predictability, ensuring complex array manipulations don't trigger unnecessary re-renders or state inconsistencies.
+## 🧠 Game Logic & Architecture
 
-Core Systems
-Dynamic Tile Evolution: Non-number tiles (Dragons, Winds, Flowers, Seasons) begin at a base value of 5. Values fluctuate (+1/-1) based on round outcomes until they hit boundary conditions (0 or 10), triggering a game-over state.
+The core engine is designed for **scalability** and **predictability**, ensuring complex array operations do not cause unnecessary re-renders or state inconsistencies.
 
-Deck Inflation System: To support infinite gameplay loops, the engine automatically reshuffles a fresh 144-tile deck into the discard pile whenever the draw pile reaches critical depletion.
+### Core Systems
 
-Fairness Buffer: A 10-tile threshold check is enforced to guarantee every round remains a balanced 5-vs-5 match, even during mid-round reshuffle events.
+#### 1) Dynamic Tile Evolution
+- Non-number tiles (**Dragons, Winds, Flowers, Seasons**) start at a base value of **5**.
+- Tile values fluctuate by **+1 / -1** based on round outcomes.
+- Reaching boundary values (**0** or **10**) triggers a **game-over** condition.
 
-The "Workspace Pattern": To handle destructive array methods (like splice) within Zustand, the logic implements a workspace clone strategy. This ensures all "deck surgery" is performed on a draft before being committed back to the immutable state.
+#### 2) Deck Inflation System
+- To support continuous gameplay, the engine reshuffles a fresh **144-tile deck** into the discard pile when the draw pile becomes critically low.
 
-Game Over Conditions
-Critical Value: Any single special tile value reaches 0 or 10.
+#### 3) Fairness Buffer
+- A **10-tile threshold check** ensures each round remains a balanced **5-vs-5** match, including during mid-round reshuffles.
 
-Exhaustion: The Draw Pile is exhausted for the 3rd time (reshuffle limit reached).
+#### 4) Workspace Pattern
+- To safely use destructive array operations (e.g., `splice`) with Zustand, the logic uses a **workspace clone strategy**.
+- All deck mutations are applied to a draft workspace and then committed back to immutable state.
 
-🛠️ Setup & Installation
-To run this project locally, follow these steps:
+---
 
-Clone the repository:
+## 🛑 Game Over Conditions
 
-Bash
-git clone https://github.com/Mahdi732/mahjong-betting-game.git
-cd mahjong-betting-game
-Install dependencies:
+The game ends when one of the following occurs:
 
-Bash
-npm install
-Run the development server:
+1. **Critical Value:** Any special tile reaches **0** or **10**.
+2. **Exhaustion:** The draw pile is exhausted for the **third time** (reshuffle limit reached).
 
-Bash
-npm run dev
-Open the app: Navigate to http://localhost:3000 in your browser.
+---
 
-🤖 AI Utilization Disclosure
-In alignment with technical assessment transparency, here is the breakdown of development:
+## 🛠️ Setup & Installation
 
-✍️ Handwritten
-Architectural Design: Core state management flow and "Workspace Pattern" logic.
+### Prerequisites
+- Node.js (LTS recommended)
+- npm
 
-Deck Mechanics: Custom algorithms for deck surgery, reshuffling, and fairness buffers.
+### Steps
 
-Frontend: Component composition, Tailwind CSS implementation, and UI/UX flow.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Mahdi732/mahjong-betting-game.git
+   cd mahjong-betting-game
+   ```
 
-Type Safety: All TypeScript interface definitions and strict type checking.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-🤖 AI Assisted
-Optimization: Logic refinement within the Zustand set functions to prevent "skipped rounds" during high-frequency state updates.
+3. **Run the development server**
+   ```bash
+   npm run dev
+   ```
 
-Documentation: Polishing technical English for UI labels and README clarity
+4. **Open the app**
+   Visit: [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 🤖 AI Utilization Disclosure
+
+In the interest of technical assessment transparency:
+
+### ✍️ Handwritten
+- Architectural design (core state flow + Workspace Pattern)
+- Deck mechanics (deck surgery, reshuffling, fairness buffers)
+- Frontend implementation (component structure, Tailwind styling, UI/UX flow)
+- Type safety (interfaces and strict type-checking)
+
+### 🤖 AI-Assisted
+- Optimization of Zustand `set` logic to prevent skipped rounds during high-frequency updates
+- Documentation polishing (technical English for UI labels and README clarity)
+
+---
+
+## 📌 Notes
+
+This project focuses on:
+- Deterministic state transitions
+- High-performance round updates
+- Clear separation of concerns for future feature expansion
